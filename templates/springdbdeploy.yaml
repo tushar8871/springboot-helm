@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Values.Deployments.db_name }}
+spec:
+  serviceName: {{ .Values.Deployments.db_name }}
+  replicas: {{ .Values.Deployments.db_replicas }}
+  selector:
+    matchLabels:
+      app: {{ .Values.Deployments.db_name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.Deployments.db_name }}
+    spec:
+      containers:
+      - name: {{ .Values.Deployments.db_name }}
+        image: mysql:5.6
+        envFrom:
+          - configMapRef:
+              name: {{ .Values.Deployments.app_env }}
+        ports:
+        - containerPort: {{ .Values.Deployments.db_port }}
+        volumeMounts:
+        - name: {{ .Values.Deployments.vol_name }}
+          mountPath: /var/lib/mysql/data
+          subPath: mysql
+  volumeClaimTemplates:
+  - metadata:
+      name: {{ .Values.Deployments.vol_name }}
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: gp2
+      resources:
+        requests:
+          storage: {{ .Values.Deployments.vol_claim_req_storage }}
+

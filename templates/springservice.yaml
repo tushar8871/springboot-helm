@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.Service.db_name }}
+  labels:
+    app: {{ .Values.Service.db_name }}
+spec:
+  type: ClusterIP
+  ports:
+  - port: {{ .Values.Service.db_svc }}
+    targetPort: {{ .Values.Service.db_svc }}
+  selector:
+    app: {{ .Values.Service.db_name }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.Service.app_name }}
+  labels:
+    run: {{ .Values.Service.app_name }}
+spec:
+  selector:
+    app: {{ .Values.Service.app_name }}
+  ports:
+  - port: {{ .Values.Service.app_svc }}
+    targetPort: {{ .Values.Service.app_target_port }}
+

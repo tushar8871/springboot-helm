@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+   name: spring-deployment
+   labels:
+     app: {{ .Values.Deployments.app_name }}
+spec:
+   replicas: {{ .Values.Deployments.app_replicas }}
+   selector:
+     matchLabels:
+       app: {{ .Values.Deployments.app_name }}
+   template:
+     metadata:
+       labels:
+         app: {{ .Values.Deployments.app_name }}
+     spec:
+       containers:
+       - name: {{ .Values.Deployments.app_name }}
+         image: {{ .Values.Deployments.app_url }}
+         env:
+         - name: dbhost
+           value: {{ .Values.Deployments.db_name }}
+         - name: dbuser
+           value: {{ .Values.Credential.db_user }}
+         - name: dbpassword
+           value: {{ .Values.Credential.db_password }}
+         - name: database
+           value: mysql
+         ports:
+         - containerPort: {{ .Values.Deployments.app_port }}
+#         resources:
+#           limits:
+#             cpu: 250m
+#             memory: 900Mi
+#           requests:
+#             cpu: 100m
+#             memory: 300Mi
+
